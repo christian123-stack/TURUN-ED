@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Turunan</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.0.0/math.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .calculator {
+            width: 360px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #aa151595;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .display {
+            width: 100%;
+            height: 50px;
+            font-size: 24px;
+            text-align: right;
+            margin-bottom: 20px;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            overflow-x: auto; /* Menambahkan scroll horizontal */
+            white-space: nowrap; /* Menghindari teks wrap */
+            word-wrap: normal; /* Memastikan kata tidak dibungkus */
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .buttons button {
+            padding: 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: black;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            box-shadow:0px 0px 9px black;
+            color:white;
+        }
+        .buttons button:hover {
+            background-color: #e0e0e0;
+        }
+        .buttons button:active {
+            background-color: #ccc;
+        }
+        .buttons button.double {
+            grid-column: span 2;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator">
+        <input id="display" type="text" class="display" disabled>
+        <div class="buttons">
+            <!-- Row 1 -->
+            <button onclick="appendToDisplay('1')">1</button>
+            <button onclick="appendToDisplay('2')">2</button>
+            <button onclick="appendToDisplay('3')">3</button>
+            <button onclick="appendToDisplay('+')">+</button>
+
+            <!-- Row 2 -->
+            <button onclick="appendToDisplay('4')">4</button>
+            <button onclick="appendToDisplay('5')">5</button>
+            <button onclick="appendToDisplay('6')">6</button>
+            <button onclick="appendToDisplay('-')">-</button>
+
+            <!-- Row 3 -->
+            <button onclick="appendToDisplay('7')">7</button>
+            <button onclick="appendToDisplay('8')">8</button>
+            <button onclick="appendToDisplay('9')">9</button>
+            <button onclick="appendToDisplay('*')">*</button>
+
+            <!-- Row 4 -->
+            <button onclick="appendToDisplay('0')">0</button>
+            <button onclick="appendToDisplay('.')">.</button>
+            <button onclick="appendToDisplay('x')">x</button>
+            <button onclick="appendToDisplay('/')">/</button>
+
+            <!-- Row 5 -->
+            <button onclick="appendToDisplay('y')">y</button>
+            <button onclick="appendToDisplay('sin(')">sin</button>
+            <button onclick="appendToDisplay('cos(')">cos</button>
+            <button onclick="appendToDisplay('tan(')">tan</button>
+
+            <!-- Row 6 -->
+            <button onclick="appendToDisplay('(')">(</button>
+            <button onclick="appendToDisplay(')')">)</button>
+            <button class="double" onclick="calculateResult()">=</button>
+            <button onclick="calculateDerivative()">Turunkan</button>
+
+            <!-- Row 7 -->
+            <button class="double" onclick="clearDisplay()">C</button>
+            <button onclick="appendToDisplay('^')">^</button> <!-- Tombol pangkat -->
+        </div>
+    </div>
+
+    <script>
+        // Fungsi untuk menambahkan input ke display
+        function appendToDisplay(value) {
+            document.getElementById("display").value += value;
+        }
+
+        // Fungsi untuk menghapus semua dari display
+        function clearDisplay() {
+            document.getElementById("display").value = '';
+        }
+
+        // Fungsi untuk menghitung turunan aljabar dan trigonometri
+        function calculateDerivative() {
+            let expression = document.getElementById("display").value;
+
+            try {
+                // Menggunakan math.js untuk menghitung turunan
+                // Menyesuaikan dengan variabel X dan Y
+                let expr = math.parse(expression.replace(/x/g, 'X').replace(/y/g, 'Y')); 
+                
+                // Tentukan turunan berdasarkan variabel (x atau y)
+                let derivative;
+                if (expression.includes('y')) {
+                    derivative = math.derivative(expr, 'Y').toString(); // Jika melibatkan y
+                } else {
+                    derivative = math.derivative(expr, 'X').toString(); // Jika melibatkan x
+                }
+
+                // Menghilangkan tanda '*' hanya pada hasil turunan
+                derivative = derivative.replace(/\*/g, '');
+
+                // Menampilkan hasil turunan di display
+                document.getElementById("display").value = derivative.replace(/X/g, 'x').replace(/Y/g, 'y');
+            } catch (error) {
+                alert("Terjadi kesalahan dalam perhitungan turunan: " + error);
+            }
+        }
+
+        // Fungsi untuk menghitung hasil ekspresi
+        function calculateResult() {
+            let expression = document.getElementById("display").value;
+
+            try {
+                // Menggunakan math.js untuk mengevaluasi ekspresi
+                expression = expression.replace(/\^/g, '**'); // Ganti '^' dengan '**' untuk operasi pangkat
+                expression = expression.replace(/y/g, 'Y'); // Ganti 'y' dengan 'Y' agar math.js bisa mengevaluasi
+                let result = math.evaluate(expression.replace(/x/g, 'X').replace(/y/g, 'Y'));
+
+                // Menampilkan hasil ke layar
+                document.getElementById("display").value = result;
+            } catch (error) {
+                alert("Terjadi kesalahan dalam perhitungan: " + error);
+            }
+        }
+    </script>
+
+</body>
+</html>
